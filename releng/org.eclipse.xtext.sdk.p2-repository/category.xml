@@ -12,5 +12,7 @@
 	<bundle id="org.objectweb.asm.source" version="6.0.0.qualifier"></bundle>
 	<bundle id="org.objectweb.asm.tree" version="6.0.0.qualifier"></bundle>
 	<bundle id="org.objectweb.asm.tree.source" version="6.0.0.qualifier"></bundle>
+	<bundle id="org.antlr.runtime" version="3.2.0.v201101311130"></bundle>
+	<bundle id="org.antlr.runtime.source" version="3.2.0.v201101311130"></bundle>
 	<category-def name="Xtext" label="Xtext"/>
 </site>
