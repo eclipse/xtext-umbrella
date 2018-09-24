@@ -17,6 +17,14 @@ node {
 		dir('.m2/repository/org/eclipse/xtend') { deleteDir() }
 		
 		sh '''
+			branchname=${1:-master}
+			
+			escaped() {
+				echo $branchname | sed 's/\\//%252F/g'
+			}
+			
+			escapedBranch=$(escaped)
+			
 			sed_inplace() {
 				if [[ "$OSTYPE" == "darwin"* ]]; then
 					sed -i '' "$@"
@@ -28,8 +36,8 @@ node {
 			targetfiles="$(find releng -type f -iname '*.target')"
 			for targetfile in $targetfiles
 			do
-				echo "Redirecting target platforms in $targetfile to $JENKINS_URL"
-				sed_inplace "s?<repository location=\\".*/job/\\([^/]*\\)/job/\\([^/]*\\)/?<repository location=\\"$JENKINS_URL/job/\\1/job/\\2/?" $targetfile
+				echo "Redirecting target platforms in $targetfile to $branchname"
+				sed_inplace "s?<repository location=\\".*/job/\\([^/]*\\)/job/[^/]*/?<repository location=\\"$JENKINS_URL/job/\\1/job/$escapedBranch/?" $targetfile
 			done
 		'''
 	}
@@ -38,7 +46,11 @@ node {
 		def workspace = pwd()
 		def mvnHome = tool 'M3'
 		sh "${mvnHome}/bin/mvn -f releng --batch-mode --update-snapshots -fae -Dmaven.repo.local=${workspace}/.m2/repository clean install"
+		wrap([$class:'Xvnc', useXauthority: true]) {
+			sh "${mvnHome}/bin/mvn -f releng/org.eclipse.xtext.sdk.tycho.tests.parent --batch-mode --update-snapshots -fae -Dmaven.repo.local=${WORKSPACE}/.m2/repository clean install"
+		}
+		step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/*.xml'])
 	}
 	
-	archive 'build/**'
+	archive 'releng/org.eclipse.xtext.swtbot.tests/screenshots/**, build/**'
 }
