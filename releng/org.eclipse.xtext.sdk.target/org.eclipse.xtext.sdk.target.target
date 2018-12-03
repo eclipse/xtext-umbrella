@@ -132,7 +132,7 @@
 		<unit id="org.eclipse.xtend.m2e.source" version="0.0.0"/>
 		<unit id="org.eclipse.xtend.standalone" version="0.0.0"/>
 		<unit id="org.eclipse.xtend.standalone.source" version="0.0.0"/>
-		<repository location="http://services.typefox.io/open-source/jenkins/job/xtext-xtend/job/release_2.16.0/lastStableBuild/artifact/build/p2-repository/"/>
+		<repository location="http://services.typefox.io/open-source/jenkins/job/xtext-xtend/job/release_2.16.0/lastSuccessfulBuild/artifact/build/p2-repository/"/>
 	</location>
 	
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
