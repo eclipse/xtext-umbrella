@@ -7,4 +7,4 @@ function subLastXtext {
     cat locations.properties | head -n 1 | rev | sed "s/${replace}/${by}/" | rev
 }
 
-cat <(subLastXtext "umbrella") <(subLastXtext "eclipse") <(subLastXtext "maven") <(cat locations.properties) | cut -d "=" -f2 - | grep "\/"
+cat <(subLastXtext "umbrella") <(cat locations.properties) | cut -d "=" -f2 - | grep "\/"
