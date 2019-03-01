@@ -1,7 +1,7 @@
 node {
 	properties([
 		[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '15']],
-		pipelineTriggers([cron('H 2 * * *')])
+		pipelineTriggers([cron('H 2 * * *'), upstream(threshold: 'SUCCESS', upstreamProjects: 'xtext-xtend/' + URLEncoder.encode("$BRANCH_NAME", "UTF-8"))])
 	])
 	
 	stage('Checkout') {
