@@ -12,7 +12,7 @@ pipeline {
   }
   
   // https://jenkins.io/doc/book/pipeline/syntax/#triggers
-  triggers {
+  triggers {    upstream(upstreamProjects: 'xtext-xtend', threshold: hudson.model.Result.SUCCESS) 
     cron('H 2 * * *')
   }
   
