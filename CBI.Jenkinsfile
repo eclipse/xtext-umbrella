@@ -49,6 +49,7 @@ spec:
 
   // https://jenkins.io/doc/book/pipeline/syntax/#triggers
   triggers {
+    upstream(upstreamProjects: 'xtext-xtend/release_2.18.0', threshold: hudson.model.Result.SUCCESS)
     cron('H 2 * * *')
   }
   
