@@ -61,7 +61,7 @@
 								</copy>
 								<copy
 									file="${basedir}/target/org.eclipse.xtext.sdk.p2-repository-2.23.0-SNAPSHOT.zip"
-									tofile="${basedir}/../../build/org.eclipse.xtext.sdk.p2-repository-2.23.0-SNAPSHOT.zip">
+									tofile="${basedir}/../../build/org.eclipse.xtext.sdk.p2-repository-2.23.0.M1.zip">
 								</copy>
 							</target>
 						</configuration>
