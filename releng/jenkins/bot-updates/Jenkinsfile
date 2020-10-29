@@ -15,6 +15,7 @@ pipeline {
       'GRADLE_VERSIONS_PROPERTY',
       'ORBIT_URL',
       'TYCHO_VERSION',
+      'MWE_VERSION',
       'GENERATE_XTEXT_LANGUAGE',
       'GENERATE_TEST_LANGUAGES'
       ]
@@ -34,6 +35,7 @@ pipeline {
         </li>
         <li><b>ORBIT_URL:</b> Set SimRel Orbit repository URL in .target files and project wizard.</li>
         <li><b>TYCHO_VERSION:</b> Set Eclipse Tycho version.</li>
+        <li><b>MWE_VERSION:</b> Set Eclipse MWE(2) version.</li>
         <li><b>GENERATE_XTEXT_LANGUAGE:</b> Regenerate the Xtext grammar language</li>
         <li><b>GENERATE_TEST_LANGUAGES:</b> Regenerate the Xtext test languages in xtext-core</li>
       </ul>
@@ -48,6 +50,7 @@ pipeline {
         <li><b>GRADLE_VERSIONS_PROPERTY:</b> Name and value, format <code>NAME=VALUE</code> (e.g. 'xtext_gradle_plugin=2.0.8'</li>
         <li><b>ORBIT_URL:</b> URL of the Eclipse Orbit p2 repository, e.g. <a href="https://download.eclipse.org/tools/orbit/downloads/2019-09">https://download.eclipse.org/tools/orbit/downloads/2019-09</a></li>
         <li><b>TYCHO_VERSION:</b> Tycho release version</li>
+        <li><b>MWE_VERSION:</b> MWE release information as comma-separated values. Format: [MWE_VERSION],[MWE2_VERSION],[MWE_P2_URL] (e.g. '1.6.0.M2,2.12.0.M2,https://download.eclipse.org/modeling/emft/mwe/updates/milestones/S202010292115/')</li>
         <li><b>GENERATE_XTEXT_LANGUAGE:</b> <i>NO VALUE NEEDED</i></li>
         <li><b>GENERATE_TEST_LANGUAGES:</b> <i>NO VALUE NEEDED</i></li>
       </ul>
@@ -325,6 +328,72 @@ pipeline {
       } // steps
     } // stage 'Update Tycho Version'
 
+    stage('Update MWE Version') {
+      when {
+        expression { params.UPDATE_TYPE == 'MWE_VERSION' }
+      }
+      steps {
+        script {
+          // set pull request title message
+          env.MWE1_VERSION="${params.UPDATE_VALUE}".split(',')[0]
+          env.MWE2_VERSION="${params.UPDATE_VALUE}".split(',')[1]
+          env.MWE_P2_URL="${params.UPDATE_VALUE}".split(',')[2]
+          // only for stable builds capture the S<TIMESTAMP> identifier from the URL for replacement in XtextVersion
+          env.MWE_BUILD_ID = env.MWE_P2_URL.matches(".*/S\\d+[/]?") ? env.MWE_P2_URL.replaceFirst(".*/(S\\d+)[/]?", "\$1") : ""
+
+          env.PR_TITLE="[releng] Update MWE to ${env.MWE1_VERSION}/${env.MWE2_VERSION}"
+
+          currentBuild.displayName = "#${env.BUILD_NUMBER} (MWE ${env.MWE2_VERSION})";
+          REPOSITORY_NAMES.split(',').each {
+            dir (it) {
+              sh """
+                for f in \$(find . -name *.target -type f); 
+                do
+                  sed -i -e 's|https://.*/emft/mwe/updates/[^"]*|${env.MWE_P2_URL}|' \$f
+                done
+              """
+            } // dir
+          } // for each repository
+          if (fileExists('xtext-lib')) { dir('xtext-lib') {
+            sh """
+              sed -i -E 's|(org\\.eclipse\\.emf\\.mwe\\..*):[^"]*|\\1:${env.MWE1_VERSION}|g' org.eclipse.xtext.dev-bom/build.gradle
+              sed -i -E 's|(org\\.eclipse\\.emf\\.mwe2\\..*):[^"]*|\\1:${env.MWE2_VERSION}|g' org.eclipse.xtext.dev-bom/build.gradle
+            """
+          }}
+          if (fileExists('xtext-core')) { dir('xtext-core') {
+            sh """
+              for f in \$(find org.eclipse.xtext.tests/testdata/wizard-expectations -name pom.xml -type f); 
+              do
+                sed -i -e 's|<mwe2Version>.*</mwe2Version>|<mwe2Version>${env.MWE2_VERSION}</mwe2Version>|' \$f
+              done
+              # Search for the line containing 'getMweVersion' and then do a sed on the following line to replace the version
+              sed -i -e '/getMweVersion/{N;s/".*"/"${env.MWE2_VERSION}"/;}' org.eclipse.xtext.util/src/org/eclipse/xtext/util/XtextVersion.java
+              sed -i -e '/getMweBuildNumber/{N;s/".*"/"${env.MWE_BUILD_ID}"/;}' org.eclipse.xtext.util/src/org/eclipse/xtext/util/XtextVersion.java
+            """
+          }}
+          if (fileExists('xtext-eclipse')) { dir('xtext-eclipse') {
+            sh """
+              sed -i -e 's|<mwe2Version>.*</mwe2Version>|<mwe2Version>${env.MWE2_VERSION}</mwe2Version>|' org.eclipse.xtext.xtext.ui.examples/projects/domainmodel/org.eclipse.xtext.example.domainmodel/pom.xml
+            """
+          }}
+          if (fileExists('xtext-umbrella')) { dir('xtext-umbrella') {
+            // the MWE2 qualified version can be retrieved from the p2 repository by querying a reference bundle
+            // the base version could differ from the versions entered in UPDATE_VALUE for milestone builds, so we extract it from the qualified version
+            env.QUALIFIED_VERSION = getQualifiedPluginVersion('org.eclipse.emf.mwe2.runtime', env.MWE_P2_URL)
+            env.UNQUALIFIED_VERSION = getUnqualifiedPluginVersion('org.eclipse.emf.mwe2.runtime', env.MWE_P2_URL)
+            sh """
+              sed -i -e 's|version="[^"]*|version="${env.QUALIFIED_VERSION}|' releng/org.eclipse.emf.mwe2.language.sdk.dummy/feature.xml
+              sed -i -e 's|<version>.*\\.v.*</version>|<version>${env.QUALIFIED_VERSION}</version>|' releng/org.eclipse.emf.mwe2.language.sdk.dummy/pom.xml
+              sed -i -e 's|<import feature="org.eclipse.emf.mwe2.language.sdk" version="[^"]*|<import feature="org.eclipse.emf.mwe2.language.sdk" version="${env.UNQUALIFIED_VERSION}|' releng/org.eclipse.xtext.sdk.feature/feature.xml
+              sed -i -e 's|<import plugin="org.eclipse.emf.mwe2.runtime" version="[^"]*|<import plugin="org.eclipse.emf.mwe2.runtime" version="${env.UNQUALIFIED_VERSION}|' releng/org.eclipse.xtext.xtext.ui.feature/feature.xml
+            """
+          }}
+          
+          commitChanges(env.PR_TITLE)
+        } // script
+      } // steps
+    } // stage 'Update Tycho Version'
+
     stage('Generate Xtext Language') {
       when {
         expression { params.UPDATE_TYPE == 'GENERATE_XTEXT_LANGUAGE' }
@@ -483,3 +552,20 @@ def commitChanges (String commitMessage) {
   }
 }
 
+/**
+ * Retrieves a plugin's qualified version from the directory listing of a p2 repository. 
+ * All plugins are listed in one line that is identifiable via its 'dirlist' div.
+ * Within the directory listing the content is filtered for the anchor tag for the queried bundle. The anchor contains the link to the (packed) jar file.
+ * From the jar file name the version qualifier is captured and returned.
+ */
+def getQualifiedPluginVersion (String pluginName, String p2Url) {
+  return sh (returnStdout: true, script: """curl -s -L ${p2Url}/plugins | grep "<div id='dirlist'>" | sed -E "s|.*>.*${pluginName}_(.*)\\.jar.*|\\1|" """).trim()
+}
+
+/**
+ * Retrieves a plugin's unqualified version (only major.minor.micro) from the directory listing of a p2 repository. 
+ */
+def getUnqualifiedPluginVersion (String pluginName, String p2Url) {
+  def qualifiedVersion = getQualifiedPluginVersion(pluginName, p2Url)
+  return qualifiedVersion.substring(0, qualifiedVersion.lastIndexOf('.'))
+}
