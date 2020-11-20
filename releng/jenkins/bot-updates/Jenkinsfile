@@ -50,7 +50,7 @@ pipeline {
         <li><b>GRADLE_VERSIONS_PROPERTY:</b> Name and value, format <code>NAME=VALUE</code> (e.g. 'xtext_gradle_plugin=2.0.8'</li>
         <li><b>ORBIT_URL:</b> URL of the Eclipse Orbit p2 repository, e.g. <a href="https://download.eclipse.org/tools/orbit/downloads/2019-09">https://download.eclipse.org/tools/orbit/downloads/2019-09</a></li>
         <li><b>TYCHO_VERSION:</b> Tycho release version</li>
-        <li><b>MWE_VERSION:</b> MWE release information as comma-separated values. Format: [MWE_VERSION],[MWE2_VERSION],[MWE_P2_URL] (e.g. '1.6.0.M2,2.12.0.M2,https://download.eclipse.org/modeling/emft/mwe/updates/milestones/S202010292115/')</li>
+        <li><b>MWE_VERSION:</b> MWE release information as comma-separated values. Format: [MWE_VERSION],[MWE2_VERSION],[MWE_P2_URL]. <b>Note</b> the URL must end with slash! (e.g. '1.6.0.M2,2.12.0.M2,https://download.eclipse.org/modeling/emft/mwe/updates/milestones/S202010292115/')</li>
         <li><b>GENERATE_XTEXT_LANGUAGE:</b> <i>NO VALUE NEEDED</i></li>
         <li><b>GENERATE_TEST_LANGUAGES:</b> <i>NO VALUE NEEDED</i></li>
       </ul>
