@@ -412,6 +412,7 @@ pipeline {
             dir (it) {
               env.HAS_CHANGES = sh label: "Evaluate if changes have been made to ${it}", returnStatus: true, script: "git diff ${env.TARGET_BRANCH}..${params.SOURCE_BRANCH} --quiet"
               env.it = "${it}"
+              env.body = "This change was brought to you by your friendly Xtext Genie."
 
               if ("${env.HAS_CHANGES}" != "0" || params.PUSH_UNCHANGED_BRANCH) {
                 sh label: "Push changes for ${it}", script: """
@@ -426,7 +427,7 @@ pipeline {
                   curl -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" $GITHUB_API_REQUEST_HEADERS \
                     -d '{ \
                       "title": "$PR_TITLE", \
-                      "body": "This change was brought to you by your friendly Xtext Genie.", \
+                      "body": "$body", \
                       "maintainer_can_modify": false, \
                       "head": "$TARGET_BRANCH", \
                       "base": "$SOURCE_BRANCH" \
