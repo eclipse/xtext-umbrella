@@ -160,6 +160,7 @@
 		<unit id="org.junit.platform.launcher.source" version="0.0.0"/>
 		<unit id="org.junit.platform.runner" version="0.0.0"/>
 		<unit id="org.junit.platform.runner.source" version="0.0.0"/>
+		<unit id="org.aopalliance" version="1.0.0.v201105210816"/>
 		<unit id="org.opentest4j" version="0.0.0"/>
 		<unit id="org.opentest4j.source" version="0.0.0"/>
 		<unit id="org.objectweb.asm" version="9.1.0.v20210209-1849"/>
