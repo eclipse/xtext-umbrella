@@ -405,7 +405,7 @@ pipeline {
         script {
         sshagent([GENIE_XTEXT_CREDENTIALS]) {
           // common headers to use for REST requests
-          env.GITHUB_API_REQUEST_HEADERS='-H \'Cookie: logged_in=no\' -H \'Authorization: token ${GITHUB_API_TOKEN}\' -H \'Content-Type: text/plain; charset=utf-8\''
+          env.GITHUB_API_REQUEST_HEADERS='-H "Cookie: logged_in=no" -H "Authorization: token ${GITHUB_API_TOKEN}" -H "Content-Type: text/plain; charset=utf-8"'
 
           // publish for each repo
           REPOSITORY_NAMES.split(',').each {
