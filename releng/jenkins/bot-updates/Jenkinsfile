@@ -423,8 +423,8 @@ pipeline {
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
               if (OPEN_PULL_REQUEST && "${env.HAS_CHANGES}" != "0") {
                 env.CREATE_PR_RESULT = sh label: "Open Pull Request", returnStdout: true, script: '''
-                  BODY="This change was brought to you by your friendly Xtext Genie."
-                  JSON = '{"title": "$PR_TITLE", "body": "$BODY", "maintainer_can_modify": false, "head": "$TARGET_BRANCH", "base": "$SOURCE_BRANCH"}'
+                  export BODY="This change was brought to you by your friendly Xtext Genie."
+                  export JSON='{"title": "$PR_TITLE", "body": "$BODY", "maintainer_can_modify": false, "head": "$TARGET_BRANCH", "base": "$SOURCE_BRANCH"}'
                   env
                   echo "END OF ENV"
                   curl -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" $GITHUB_API_REQUEST_HEADERS -d ${JSON}
