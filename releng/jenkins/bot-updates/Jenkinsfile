@@ -437,10 +437,10 @@ pipeline {
                   script: 'curl \
                     -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" \
                     $GITHUB_API_REQUEST_HEADERS \
-                    -d \'{"title": "${PR_TITLE}", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "${TARGET_BRANCH}", "base": "${SOURCE_BRANCH}"}\''
+                    -H "Authorization: token $GITHUB_API_TOKEN" \
+                    -d \'{"title": $PR_TITLE, "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "${TARGET_BRANCH}", "base": "${SOURCE_BRANCH}"}\''
                 )
 
-                    //-H "Authorization: token $GITHUB_API_TOKEN" \
                 // Update PR with reviewers, labels, milestone
                 // get the first line containing 'number' and from there the value
                 //env.PR_NUMBER = sh (label: "Get PR number", returnStdout: true, script: """echo "${env.CREATE_PR_RESULT}" | grep -m 1 number | sed -e 's|.*: \\(.*\\),|\\1|'""").trim()
