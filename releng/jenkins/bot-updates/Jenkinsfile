@@ -424,6 +424,7 @@ pipeline {
 
               sh (
                   label: "Debug ENV",
+                  returnStdout: true,
                   script: 'echo ${TARGET_BRANCH}'
               )
 
