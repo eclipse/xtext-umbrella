@@ -424,20 +424,47 @@ pipeline {
 
               sh (
                   label: "Debug ENV",
-                  returnStdout: true,
                   script: 'echo ${PR_TITLE}'
               )
 
               sh (
                   label: "Debug ENV",
-                  returnStdout: true,
                   script: 'echo ${SOURCE_BRANCH}'
               )
 
               sh (
                   label: "Debug ENV",
-                  returnStdout: true,
                   script: 'echo ${TARGET_BRANCH}'
+              )
+
+              sh (
+                  label: "Debug ENV",
+                  script: 'echo "${PR_TITLE}"'
+              )
+
+              sh (
+                  label: "Debug ENV",
+                  script: 'echo "${SOURCE_BRANCH}"'
+              )
+
+              sh (
+                  label: "Debug ENV",
+                  script: 'echo "${TARGET_BRANCH}"'
+              )
+
+              sh (
+                  label: "Debug ENV",
+                  script: "echo ${PR_TITLE}"
+              )
+
+              sh (
+                  label: "Debug ENV",
+                  script: "echo ${SOURCE_BRANCH}"
+              )
+
+              sh (
+                  label: "Debug ENV",
+                  script: "echo ${TARGET_BRANCH}"
               )
 
               // Create a pull request, but only when there were changes made on the target branch
