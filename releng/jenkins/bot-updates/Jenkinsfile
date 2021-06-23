@@ -400,20 +400,18 @@ pipeline {
       }
       environment {
         GITHUB_API_TOKEN = credentials("${GITHUB_API_CREDENTIALS_ID}")
+        GITHUB_API_REQUEST_HEADERS = '"Cookie: logged_in=no" -H "Content-Type: text/plain; charset=utf-8"'
       }
       steps {
         script {
         sshagent([GENIE_XTEXT_CREDENTIALS]) {
-          // common headers to use for REST requests
-          env.GITHUB_API_REQUEST_HEADERS='-H "Cookie: logged_in=no" -H "Authorization: token ${GITHUB_API_TOKEN}" -H "Content-Type: text/plain; charset=utf-8"'
-
           // publish for each repo
           REPOSITORY_NAMES.split(',').each {
             dir (it) {
-              env.HAS_CHANGES = sh label: "Evaluate if changes have been made to ${it}", returnStatus: true, script: "git diff ${env.TARGET_BRANCH}..${params.SOURCE_BRANCH} --quiet"
-              //env.it = "${it}"
+              env.it = "${it}"
+              HAS_CHANGES = sh label: "Evaluate if changes have been made to ${it}", returnStatus: true, script: "git diff ${env.TARGET_BRANCH}..${params.SOURCE_BRANCH} --quiet"
 
-              if ("${env.HAS_CHANGES}" != "0" || params.PUSH_UNCHANGED_BRANCH) {
+              if ("${HAS_CHANGES}" != "0" || params.PUSH_UNCHANGED_BRANCH) {
                 sh label: "Push changes for ${it}", script: """
                   git push --force origin ${env.TARGET_BRANCH}
                 """
@@ -421,38 +419,37 @@ pipeline {
 
               // Create a pull request, but only when there were changes made on the target branch
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
-              if (OPEN_PULL_REQUEST && "${env.HAS_CHANGES}" != "0") {
+              if (OPEN_PULL_REQUEST && "${HAS_CHANGES}" != "0") {
                 env.CREATE_PR_RESULT = sh (
                   label: "Open Pull Request",
                   returnStdout: true,
                   script: 'env; curl \
                     -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" \
-                    -H "Cookie: logged_in=no" \
+                    $GITHUB_API_REQUEST_HEADERS \
                     -H "Authorization: token $GITHUB_API_TOKEN" \
-                    -H "Content-Type: text/plain; charset=utf-8" \
                     -d \'{"title": "$PR_TITLE", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "$TARGET_BRANCH", "base": "$SOURCE_BRANCH"}\''
                 )
 
                 // Update PR with reviewers, labels, milestone
                 // get the first line containing 'number' and from there the value
-                env.PR_NUMBER = sh (label: "Get PR number", returnStdout: true, script: """echo "${env.CREATE_PR_RESULT}" | grep -m 1 number | sed -e 's|.*: \\(.*\\),|\\1|'""").trim()
+                //env.PR_NUMBER = sh (label: "Get PR number", returnStdout: true, script: """echo "${env.CREATE_PR_RESULT}" | grep -m 1 number | sed -e 's|.*: \\(.*\\),|\\1|'""").trim()
                 
                 // see https://developer.github.com/v3/pulls/review_requests/#create-a-review-request
                 // TODO: Use team_reviewers?
-                env.ADD_REVIEWERS_RESULT = sh label: "Request reviewers", returnStdout: true, script: '''
-                  curl -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls/$PR_NUMBER/requested_reviewers" $GITHUB_API_REQUEST_HEADERS \
-                      -d '{ "reviewers": [ $GITHUB_PR_REVIEWERS ] }'
-                '''
+                //env.ADD_REVIEWERS_RESULT = sh label: "Request reviewers", returnStdout: true, script: '''
+                //  curl -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls/$PR_NUMBER/requested_reviewers" $GITHUB_API_REQUEST_HEADERS \
+                //      -d '{ "reviewers": [ $GITHUB_PR_REVIEWERS ] }'
+                //'''
 
                 // get the open milestones for the repository
                 // grep for the expected milestone name 'Release_<MAJOR>.<MINOR>' and get attributes around that line
                 // grep for the number attribute value
-                env.MILESTONE_NUMBER = sh (label: "Get number of milestone ${env.MILESTONE_NAME}", returnStdout: true, script: """curl -s https://api.github.com/repos/eclipse/${it}/milestones | grep -b4 -a4 ${env.MILESTONE_NAME} | grep number | sed -e 's|.*: \\(.*\\),|\\1|'""").trim()
+                //env.MILESTONE_NUMBER = sh (label: "Get number of milestone ${env.MILESTONE_NAME}", returnStdout: true, script: """curl -s https://api.github.com/repos/eclipse/${it}/milestones | grep -b4 -a4 ${env.MILESTONE_NAME} | grep number | sed -e 's|.*: \\(.*\\),|\\1|'""").trim()
                 
-                env.UPDATE_PR_RESULT = sh label: "Set labels, milestone ${env.MILESTONE_NUMBER} and assign to bot", returnStdout: true, script: '''
-                  curl -X "PATCH" -s "https://api.github.com/repos/eclipse/$it/issues/$PR_NUMBER" $GITHUB_API_REQUEST_HEADERS \
-                      -d '{ "labels": [ "bot", "releng"], "assignees": [ "genie-xtext"], "milestone": $MILESTONE_NUMBER }'
-                '''
+                // env.UPDATE_PR_RESULT = sh label: "Set labels, milestone ${env.MILESTONE_NUMBER} and assign to bot", returnStdout: true, script: '''
+                //   curl -X "PATCH" -s "https://api.github.com/repos/eclipse/$it/issues/$PR_NUMBER" $GITHUB_API_REQUEST_HEADERS \
+                //       -d '{ "labels": [ "bot", "releng"], "assignees": [ "genie-xtext"], "milestone": $MILESTONE_NUMBER }'
+                // '''
               } // if has changes
             } // dir
           } // for each repository
