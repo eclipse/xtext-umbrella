@@ -401,6 +401,9 @@ pipeline {
       environment {
         GITHUB_API_TOKEN = credentials("${GITHUB_API_CREDENTIALS_ID}")
         GITHUB_API_REQUEST_HEADERS = '"Cookie: logged_in=no" -H "Content-Type: text/plain; charset=utf-8"'
+        PR_TITLE = "${envPR_TITLE}"
+        SOURCE_BRANCH = "${params.SOURCE_BRANCH}"
+        TARGET_BRANCH = "${env.TARGET_BRANCH}"
       }
       steps {
         script {
@@ -416,56 +419,6 @@ pipeline {
                   git push --force origin ${env.TARGET_BRANCH}
                 """
               }
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'env'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'echo ${PR_TITLE}'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'echo ${SOURCE_BRANCH}'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'echo ${TARGET_BRANCH}'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'echo "${PR_TITLE}"'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'echo "${SOURCE_BRANCH}"'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: 'echo "${TARGET_BRANCH}"'
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: "echo ${PR_TITLE}"
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: "echo ${SOURCE_BRANCH}"
-              )
-
-              sh (
-                  label: "Debug ENV",
-                  script: "echo ${TARGET_BRANCH}"
-              )
 
               // Create a pull request, but only when there were changes made on the target branch
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
