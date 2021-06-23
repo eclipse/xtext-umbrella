@@ -431,7 +431,8 @@ pipeline {
               // Create a pull request, but only when there were changes made on the target branch
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
               if (OPEN_PULL_REQUEST && "${HAS_CHANGES}" != "0") {
-                env.CREATE_PR_RESULT = sh (
+                //env.CREATE_PR_RESULT = 
+                sh (
                   label: "Open Pull Request",
                   returnStdout: true,
                   script: 'curl \
