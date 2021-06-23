@@ -419,6 +419,9 @@ pipeline {
                 """
               }
 
+              echo "${PR_TITLE}"
+              echo "${env.PR_TITLE}"
+
               // Create a pull request, but only when there were changes made on the target branch
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
               if (OPEN_PULL_REQUEST && "${HAS_CHANGES}" != "0") {
@@ -426,7 +429,7 @@ pipeline {
                   label: "Open Pull Request",
                   returnStdout: true,
                   script: '''
-                    curl --verbose -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" \
+                    curl -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" \
                     -H "Cookie: logged_in=no" -H "Content-Type: text/plain; charset=utf-8" \
                     -H "Authorization: token $GITHUB_API_TOKEN" \
                     -d '{"title": "$PR_TITLE", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "'$TARGET_BRANCH'", "base": "'$SOURCE_BRANCH'" }'
