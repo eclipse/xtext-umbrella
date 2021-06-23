@@ -425,7 +425,12 @@ pipeline {
                 env.CREATE_PR_RESULT = sh (
                   label: "Open Pull Request",
                   returnStdout: true,
-                  script: 'curl -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" -H "Cookie: logged_in=no" -H "Authorization: token $GITHUB_API_TOKEN" -H "Content-Type: text/plain; charset=utf-8" -d \'{"title": "$PR_TITLE", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "$TARGET_BRANCH", "base": "$SOURCE_BRANCH"}\''
+                  script: 'curl \
+                    -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" \
+                    -H "Cookie: logged_in=no" \
+                    -H "Authorization: token $GITHUB_API_TOKEN" \
+                    -H "Content-Type: text/plain; charset=utf-8" \
+                    -d \'{"title": "$PR_TITLE", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "$TARGET_BRANCH", "base": "$SOURCE_BRANCH"}\''
                 )
 
                 // Update PR with reviewers, labels, milestone
