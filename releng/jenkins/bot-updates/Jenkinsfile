@@ -422,6 +422,11 @@ pipeline {
                   script: 'env'
               )
 
+              sh (
+                  label: "Debug ENV",
+                  script: 'echo ${TARGET_BRANCH}'
+              )
+
               // Create a pull request, but only when there were changes made on the target branch
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
               if (OPEN_PULL_REQUEST && "${HAS_CHANGES}" != "0") {
