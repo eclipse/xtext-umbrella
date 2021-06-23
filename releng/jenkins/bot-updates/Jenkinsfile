@@ -429,7 +429,7 @@ pipeline {
                     curl --verbose -X "POST" -s "https://api.github.com/repos/eclipse/${it}/pulls" \
                     -H "Cookie: logged_in=no" -H "Content-Type: text/plain; charset=utf-8" \
                     -H "Authorization: token $GITHUB_API_TOKEN" \
-                    -d '{"title": "'$PR_TITLE'", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "'$TARGET_BRANCH'", "base": "'$SOURCE_BRANCH'" }'
+                    -d '{"title": "$PR_TITLE", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "'$TARGET_BRANCH'", "base": "'$SOURCE_BRANCH'" }'
                   '''
                 )
 
