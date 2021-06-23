@@ -411,7 +411,7 @@ pipeline {
           REPOSITORY_NAMES.split(',').each {
             dir (it) {
               env.HAS_CHANGES = sh label: "Evaluate if changes have been made to ${it}", returnStatus: true, script: "git diff ${env.TARGET_BRANCH}..${params.SOURCE_BRANCH} --quiet"
-              env.it = "${it}"
+              //env.it = "${it}"
 
               if ("${env.HAS_CHANGES}" != "0" || params.PUSH_UNCHANGED_BRANCH) {
                 sh label: "Push changes for ${it}", script: """
