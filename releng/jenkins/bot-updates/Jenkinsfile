@@ -400,9 +400,9 @@ pipeline {
       }
       environment {
         GITHUB_API_TOKEN = credentials("${GITHUB_API_CREDENTIALS_ID}")
-        PR_TITLE = "${env.PR_TITLE}"
-        SOURCE_BRANCH = "${params.SOURCE_BRANCH}"
-        TARGET_BRANCH = "${env.TARGET_BRANCH}"
+        //PR_TITLE = "${env.PR_TITLE}"
+        //SOURCE_BRANCH = "${params.SOURCE_BRANCH}"
+        //TARGET_BRANCH = "${env.TARGET_BRANCH}"
       }
       steps {
         script {
