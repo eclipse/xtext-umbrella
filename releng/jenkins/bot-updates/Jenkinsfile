@@ -424,7 +424,6 @@ pipeline {
               // see https://developer.github.com/v3/pulls/#create-a-pull-request
               if (OPEN_PULL_REQUEST && "${HAS_CHANGES}" != "0") {
                   create_pr()
-                )
 
                 // Update PR with reviewers, labels, milestone
                 // get the first line containing 'number' and from there the value
@@ -467,6 +466,7 @@ def create_pr() {
         $GITHUB_API_REQUEST_HEADERS \
         -H "Authorization: token $GITHUB_API_TOKEN" \
         -d \'{"title": "${PR_TITLE}", "body": "This change was brought to you by your friendly Xtext Genie.", "maintainer_can_modify": false, "head": "${TARGET_BRANCH}", "base": "${SOURCE_BRANCH}"}\''
+  )
 }
 
 /**
