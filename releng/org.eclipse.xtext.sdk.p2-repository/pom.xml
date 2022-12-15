@@ -20,7 +20,7 @@
 			Usually this is the same as the (snapshot) project version
 			but for releases it is set to the release version.
 		-->
-		<zipFileVersion>2.28.1</zipFileVersion>
+		<zipFileVersion>2.28.1.M1</zipFileVersion>
 	</properties>
 
 	<build>
