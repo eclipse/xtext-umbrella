@@ -10,4 +10,15 @@
 	<groupId>org.eclipse.emf</groupId>
 	<artifactId>org.eclipse.emf.mwe2.language.sdk</artifactId>
 	<version>2.14.0.v20221117-1134</version>
+
+	<profiles>
+		<profile>
+			<id>useJenkinsSnapshots</id>
+			<properties>
+				<!-- redefines the property for versions of artifacts not in this Git repository,
+					so that it takes the same snapshot version of this project's parent'. -->
+				<xtext-current-release-version>${project.parent.version}</xtext-current-release-version>
+			</properties>
+		</profile>
+	</profiles>
 </project>
