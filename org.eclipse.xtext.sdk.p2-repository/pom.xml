@@ -11,7 +11,7 @@
 	<groupId>org.eclipse.xtext</groupId>
 	<artifactId>org.eclipse.xtext.sdk.p2-repository</artifactId>
 	<packaging>eclipse-repository</packaging>
-	
+
 	<properties>
 		<!-- 
 			Version qualifier of the target zip file 
@@ -43,7 +43,7 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>${basedir}/../../build</directory>
+							<directory>${basedir}/../build</directory>
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 					</filesets>
@@ -60,12 +60,12 @@
 						</goals>
 						<configuration>
 							<target>
-								<copy todir="${basedir}/../../build/p2-repository/">
+								<copy todir="${basedir}/../build/p2-repository/">
 									<fileset dir="${basedir}/target/repository/" />
 								</copy>
 								<copy
 									file="${basedir}/target/org.eclipse.xtext.sdk.p2-repository-2.30.0-SNAPSHOT.zip"
-									tofile="${basedir}/../../build/org.eclipse.xtext.sdk.p2-repository-${zipFileVersion}.zip">
+									tofile="${basedir}/../build/org.eclipse.xtext.sdk.p2-repository-${zipFileVersion}.zip">
 								</copy>
 							</target>
 						</configuration>
