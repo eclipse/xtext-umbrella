@@ -73,8 +73,9 @@ pipeline {
       steps {
         sh '''
           mvn \
-            -f releng/org.eclipse.xtext.p2.releng \
+            -f org.eclipse.xtext.p2.releng \
             clean package \
+            -PuseJenkinsSnapshots \
             -P eclipse-sign,buildP2Repository \
             --batch-mode \
             --update-snapshots \
