@@ -9,8 +9,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>../org.eclipse.xtext.sdk.target</module>
-		<module>../org.eclipse.xtext.sdk.parent</module>
 		<module>../org.eclipse.xtext.docs.feature</module>
 		<module>../org.eclipse.xtext.examples.feature</module>
 		<module>../org.eclipse.xtext.generator.feature</module>
@@ -25,22 +23,5 @@
 		<module>../org.eclipse.xtext.sdk.p2-repository</module>
 		<module>../org.eclipse.emf.mwe2.language.sdk.dummy</module>
 	</modules>
-
-	<!--
-	TODO:
-	This is a temporary workaround to have a single Jenkins job
-	that first runs all the tests and the creates a p2 repository
-	with signed contents. When enabling this profile, we should
-	not run the "clean" phase, so that test reports generated in the
-	previous maven build are not cleaned.
-	-->
-	<profiles>
-		<profile>
-			<id>buildP2Repository</id>
-			<modules>
-				<module>../org.eclipse.xtext.sdk.p2-repository</module>
-			</modules>
-		</profile>
-	</profiles>
 
 </project>
