@@ -18,7 +18,7 @@
 			Usually this is the same as the (snaphsot) project version
 			but for releases it is set to the release version.
 		-->
-		<zipFileVersion>2.30.0-SNAPSHOT</zipFileVersion>
+		<zipFileVersion>2.31.0-SNAPSHOT</zipFileVersion>
 	</properties>
 
 	<build>
@@ -64,7 +64,7 @@
 									<fileset dir="${basedir}/target/repository/" />
 								</copy>
 								<copy
-									file="${basedir}/target/org.eclipse.xtext.sdk.p2-repository-2.30.0-SNAPSHOT.zip"
+									file="${basedir}/target/org.eclipse.xtext.sdk.p2-repository-2.31.0-SNAPSHOT.zip"
 									tofile="${basedir}/../build/org.eclipse.xtext.sdk.p2-repository-${zipFileVersion}.zip">
 								</copy>
 							</target>
