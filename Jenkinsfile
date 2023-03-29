@@ -19,8 +19,6 @@ pipeline {
   }
 
   triggers {
-    // only on master branch / 30 minutes before nightly sign-and-deploy
-    cron(env.BRANCH_NAME == 'master' ? '20 21 * * *' : '')
     githubPush()
   }
   
